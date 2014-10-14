@@ -15,7 +15,6 @@ sudo mv jdk1.7.0/ java-7-sun
 insert some thing
 ?
 1
-sudo gedit /etc/profile
 添加：
 ?
 1

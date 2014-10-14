@@ -30,7 +30,6 @@ bool Ball::move(int x1,int x2)
 		tmpY = bound->top + bound->top - tmpY ;
 		my = - my ;
 	}
-	//so as the cpp file
 	else if(tmpY > bound->bottom)
 	{
 		if(!isOut(x1,x2))
