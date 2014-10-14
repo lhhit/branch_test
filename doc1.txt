@@ -4,8 +4,6 @@
 1
 wget -c http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-i586.tar.gz
 (注：如果下载不下来，建议使用迅雷下载，然后拷贝到Linux系统上。)
-
-
 ?
 1
 2
