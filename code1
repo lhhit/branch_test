@@ -1,0 +1,7 @@
+<body>
+		<div id="main_container">
+        	<canvas id="icon_panel" width="50" height="500"></canvas>
+        	<div id='toolbar'></div>
+			<canvas id="draw_panel" width="700" height="500"></canvas>
+		</div>
+	<script src="paint.js"></script>
