@@ -26,5 +26,5 @@ public :
 	void drawBall(CDC * pDC) ;
 
 } ;
-
+//add the comments at the end of the file
 #endif

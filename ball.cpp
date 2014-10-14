@@ -46,6 +46,7 @@ bool Ball::move(int x1,int x2)
 	y = tmpY ;
 	return true ;
 }
+//add another comments
 bool Ball::isOut(int x1 , int x2)
 {
 	if(x >= x1 && x <= x2)

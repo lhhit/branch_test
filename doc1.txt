@@ -12,7 +12,7 @@ sudo tar zxvf ./jdk-7-linux-i586.tar.gz -C /usr/lib/jvm
 cd /usr/lib/jvm
 sudo mv jdk1.7.0/ java-7-sun
 第三步：修改环境变量
-
+insert some thing
 ?
 1
 sudo gedit /etc/profile
