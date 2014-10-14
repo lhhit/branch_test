@@ -1,0 +1,141 @@
+Step1:
+
+在GitHub上创建一个测试用的项目：https://github.com/JOJOZHANGJU/testgithub.git
+
+这个项目已经在github.com上创建好，名字叫做testgithub.git
+
+Step2:
+
+转到自己的工作目录：
+
+例如：githabtest
+
+注：最好勾选上初始化一个readme文件
+
+
+?
+1
+cd githabtest/
+Step3:
+
+创建并下载相关项目：
+
+
+?
+1
+git clone git@github.com:JOJOZHANGJU/test.git
+可能会遇到permission denied publickey的问题：
+
+solution：
+
+
+?
+1
+cat ~/.ssh/id_rsa.pub
+复制密钥之后在github上添加ssh密钥即可
+
+Step4:
+
+进入目录看看：
+
+
+?
+1
+cd test
+Step5:
+
+
+查看主枝和分支。登录GitHub.com，加入项目后，在项目里的Network有图形化的分支图
+
+
+?
+1
+2
+git show-branch
+[master] Initial commit
+Step6:
+
+建立项目远程地址
+
+
+?
+1
+git remote add origin git@gitbub.com:JOJOZHANGJU/test.git
+Step7:
+
+建立自己的分支或者使用当前分支都可以，下面介绍建立自己的分支
+
+
+?
+1
+git branch your_branch_name
+
+Step8:
+
+再看看有哪些分支
+
+
+?
+1
+git show-branch
+
+Step9:
+
+查看现在使用的分支
+
+
+?
+1
+git branch
+*表示当前使用的分支
+
+Step10:
+
+进入自己的分支：
+
+?
+1
+git checkout your_branch_name
+Step11:
+
+添加、修改些东西，something代表你要修改的文件，或者新建一个文件都可以
+
+
+?
+1
+2
+touch test.txt
+echo "HELLO WORLD">test.txt
+Step12:
+
+把文件加入到跟踪（注：每次提交前必须要这步）
+
+?
+1
+git add test.txt
+
+
+Step13:
+
+提交修改（提交到本地，还没有传到服务器）
+
+?
+1
+git commit -m '说明'
+
+
+Step14:
+提交分支到服务器
+
+
+?
+1
+git push origin your_branch_name
+Step15:
+
+获得最新的项目文件（从服务器下载）
+
+
+?
+1
+git pull git://github.com/JOJOZHANGJU/test.git JOJO
