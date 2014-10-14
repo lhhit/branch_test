@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>window.scrollY</title>
+		<style>
+			.tag{
+				width:100% ;
+				height:400px ;
+				line-height:400px ;
+				border-bottom:10px thin #006699 ;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="tag">0</div>
+		<div class="tag">400</div>
+		<div class="tag">800</div>
+		<div class="tag">1200</div>
+		<div class="tag">1600</div>
+		<script>
+			//test scrollY 
+			var hasFinished = false ;
+			window.onscroll = function(){
+				if(!hasFinished){
+					setTimeout(function(){
+						var sY = window.scrollY ,
+							docEleScrollTop = document.documentElement.scrollTop ,
+							docBdyScrollTop = document.body.scrollTop ,
+							winPageYOffset = window.pageYOffset ,
+							offsetY ;
+						offsetY = winPageYOffset || docEleScrollTop || docBdyScrollTop ;
+						console.log("window.scrollY="+sY) ;
+						console.log("document.documentElement.scrollTop="+docEleScrollTop) ;
+						console.log("document.body.scrollTop="+docBdyScrollTop) ;
+						console.log("window.pageYOffset="+winPageYOffset) ;
+						console.log("the final offsetY = "+offsetY) ;
+						hasFinished  = false ;
+					}) ;
+					hasFinished = true ;
+				}
+			}
+		</script>
+	</body>
+</html>
