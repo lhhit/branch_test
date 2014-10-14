@@ -1,0 +1,45 @@
+P => X ;
+X -> funDefine X | mainFun ;
+funDefine -> funHead funBody ;
+funHead -> returnType ID LR_BRAC formalParam RR_BRAC ;
+funBody -> LB_BRAC funDomain RB_BRAC ;
+funDomain -> declaration funDomain |
+			assignment funDomain |
+			condition funDomain |
+			loop funDomain |
+			io funDomain |
+			funApply funDomain |
+			returnWord funDomain |
+			SEMIC funDomain |
+			 ;
+returnType -> INT | DOUBLE | CHAR | BOOL | VOID ;
+formalParam -> paramList | ;
+paramList -> type ID COMMA paramList | type ID ;
+type -> INT | DOUBLE | BOOL | CHAR ;
+declaration -> type idList SEMIC ;
+idList -> ID COMMA idList | ID ;
+assignment -> 	ID ASSIGN EXP SEMIC | 
+				ID ASSIGN funApply | singleOP SEMIC | 
+				ID ASSIGN STRING_C SEMIC | ID ASSIGN CHAR_C SEMIC ;
+EXP -> E AND EXP | E OR EXP | E ;
+E -> T ADD E | T SUB E | T ;
+T -> F MUL_OR_INDIR T | F DIV T | F ;
+F -> G relOP G | G ;
+G -> LR_BRAC EXP RR_BRAC | ID | TRUE | FALSE | DIGIT ;
+DIGIT -> INT_C | REAL_C ;
+relOP -> EQ | NEQ | GE | GT | LE | LT ;
+funApply -> ID LR_BRAC acturalParam RR_BRAC SEMIC ;
+acturalParam -> idList | ;
+singleOP -> INC ID | ID INC | DEC ID | ID DEC ;
+condition -> IF LR_BRAC EXP RR_BRAC funBody |
+			IF LR_BRAC EXP RR_BRAC funBody ELSE funBody ;
+loop -> FOR LR_BRAC forAssignPart SEMIC forBoolPart SEMIC forAssignPart RR_BRAC funBody ;
+forAssignPart -> forAssignList | ;
+forAssignList -> forAssignment COMMA forAssignList | forAssignment ;
+forAssignment -> ID ASSIGN EXP | singleOP ;
+forBoolPart -> EXP | ;
+returnWord -> RETURN returnVal SEMIC ;
+returnVal -> EXP | STRING_C | CHAR_C | ;
+io -> PRINTF LR_BRAC printContent RR_BRAC SEMIC | SCANF LR_BRAC STRING_C COMMA REFERENCE ID RR_BRAC SEMIC ;
+printContent -> STRING_C | STRING_C COMMA ID ;		 
+mainFun -> INT MAIN LR_BRAC formalParam RR_BRAC funBody ;
