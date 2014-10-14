@@ -1,0 +1,177 @@
+一、Jdk安装
+命令：sudo apt-get install openjdk-6-jdk
+目录：/usr/lib/jvm/java-6-openjdk
+配置环境变量：
+sudo gedit /etc/environment
+在其中添加如下两行： 
+CLASSPATH=./:/usr/lib/jvm/java-6-openjdk/lib
+JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+PATH添加：:/usr/lib/jvm/java-6-openjdk
+
+二、新增hadoop用户
+命令：sudo addgroup hadoop1001
+sudo adduser --ingroup hadoop hadoop
+sudo gedit etc/sudoers
+添加配置：
+在root ALL=(ALL) ALL后 hadoop ALL=(ALL) ALL使hadoop用户具有root权限
+（id：查看用户）
+
+三、ssh配置
+用hadoop账户进行登录。
+安装openssh-server：sudo apt-get install openssh-server
+建立SSH KEY：ssh-keygen -t rsa --P ""
+启用SSH KEY：cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+sudo /etc/init.d/ssh reload
+验证SSH的配置：ssh localhost
+
+四、安装hadoop并更改用户所有权
+我们采用的Hadoop版本是最新的Hadoop-0.20.2，可到Apache基金会官方主页下载http://www.apache.org/dyn/closer.cgi/hadoop/core,然后使用tar或直接解压到/home/hadoop下，解压后得到一个hadoop-0.20.2的一个文件夹。
+    安装目录：/usr/local/hadoop
+    更改所有权：chown -R hadoop:hadoop hadoop
+
+五、配置hadoop
+(1)配置$HADOOP_HOME/conf/hadoop-env.sh
+切换到Hadoop的安装路径找到hadoop-0.20.2下的conf/hadoop-env.sh文件
+将：# export JAVA_HOME=/usr/lib/j2sdk1.5-sun
+改为：export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+(2) 配置$HADOOP_HOME/conf/core-site.xml
+切换到Hadoop的安装路径找到hadoop-0.20.2下的conf/core-site.xml文件
+<configuration>
+<property>
+  <name>fs.default.name</name>
+  <value>hdfs://localhost:9000</value>
+</property>
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>/home/hadoop/tmp</value>
+</property>
+-- 配置第二名称节点
+<property>
+  <name>fs.checkpoint.dir</name>
+  <value>{}/home/hadoop/secondname</value> 
+</property>
+-- 设置回收站保留时间
+<property>
+  <name>fs.trash.interval</name>
+  <value>10080</value>
+  <description>
+      Number of minutes between trash checkpoints. If zero, the trash feature is disabled
+  </description>
+</property>
+</configuration>
+(3) 配置$HADOOP_HOME/conf/hdfs-site.xml
+切换到Hadoop的安装路径找到hadoop-0.20.2下的conf/hdfs-site.xml文件内容如下：
+<configuration>
+<property>
+<name>dfs.name.dir</name>
+<value>/home/hadoop/name</value>
+</property> 
+<property>
+<name>dfs.data.dir</name>
+<value>/home/hadoop/data</value>
+</property>
+<property>
+<name>dfs.replication</name>
+<value>2</value>
+</property> 
+-- NameNode HTTP状态监视地址
+<property>
+<name>dfs.http.address</name>
+<value>localhost:50070</value>
+</property> 
+-- SecondaryNameNode HTTP状态监视地址
+<property>
+<name>dfs.secondary.http.address</name>
+<value>localhost2:50070</value>
+</property> 
+</configuration>
+(4) 配置$HADOOP_HOME/conf/mapred-site.xml
+切换到hadoop的安装路径找到hadoop-0.20.2下的conf/mapred-site.xml文件内容如下：
+<configuration>
+<property>
+<name>mapred.local.dir</name>
+<value>/home/hadoop/temp</value>
+</property> 
+<property>
+<name>mapred.job.tracker</name>
+<value>localhost:9001</value>
+</property> 
+-- 每个job的map任务数
+<property>
+<name>mapred.map.tasks</name>
+<value>7</value>
+</property> 
+-- 每一个tasktracker同时运行的map任务数为2
+<property>
+<name>mapred.tasktracker.map.tasks.maximum</name>
+<value>2</value>
+</property> 
+-- 每一个tasktracker同时运行的reduce任务数为4
+<property>
+<name>mapred.tasktracker.reduce.tasks.maximum
+</name>
+<value>4</value>
+</property> 
+-- jvm虚拟机最大内存
+<property>
+  <name>mapred.child.java.opts</name>
+  <value>-XX:-UseGCOverheadLimit</value>
+</property>
+</configuration>
+
+六、格式化namenode
+命令：bin/hadoop namenode -format
+
+七、启动及验证
+命令：./bin/start-all.sh
+验证方法1：jps
+验证方法2：bin/hadoop dfsadmin -report
+
+八：运行Wordcount
+1.准备工作
+准备两个文本文件并拷贝到dfs里，具体命令操作如下：
+$ echo "hello hadoop world." > /tmp/test_file1.txt
+$ echo "hello world hadoop.i'm ceshiuser." > /tmp/test_file2.txt
+$ bin/hadoop dfs -mkdir test-in
+$ bin/hadoop dfs -copyFromLocal /tmp/test*.txt test-in
+--$ bin/hadoop dfs -put /tmp/test*.txt test-in
+--$ bin/hadoop dfs -copyToLocal test-out /tmp/test*.txt
+--$ bin/hadoop dfs -get test-out /tmp/test*.txt
+$ bin/hadoop dfs -ls test-in
+2.运行
+$ bin/hadoop jar hadoop-0.20.2-examples.jar wordcount test-in test-out
+--% ln -s /home/hadoop/junyu-hadoop/hadoop-iflytek-tempcount.jar tempcount
+3.查看结果
+$ bin/hadoop dfs -ls test-out
+$ bin/hadoop dfs -cat test-out/part-r-00000
+
+
+分布式部署：
+一，修改/etc/hosts文件：
+192.168.71.89  node0
+192.168.77.213 node1
+
+二，ssh配置
+(1)使用scp 命令把生成的公钥传给其它服务器，并保存成不同的名字，如192.168.71.89 -> 192.168.77.213 ，并且保存为89_id_rsa.pub 的时候命令如下：
+scp id_rsa.pub hadoop@192.168.77.213:/home/hadoop/.ssh/89_id_rsa.pub
+(2) 登录192.168.77.213 ，可以远程登录：ssh hadoop@192.168.77.213,进入当前用户默认目录下的.ssh 目录:cd ~/.ssh 
+(3) 把公钥内容添加到登录认证文件中：cat 89_id_rsa.pub >> authorized_keys 
+(4) 登录到192.168.71.89 主机，使用ssh hadoop@192.168.77.213 进行连接213 主机，这时候会出现输入yes/no? 的提示，输入yes。
+
+三，配置hadoop文件。目录：/usr/local/hadoop/conf/
+conf/masters ：192.168.71.89
+conf/slaves  ：192.168.77.213
+
+修改 core-site.xml 文件
+   <name>fs.default.name</name>
+   <value>hdfs://192.168.71.89:9000/</value>
+
+修改 hdfs-site.xml 文件
+1：<name>dfs.http.address</name>
+   <value>192.168.71.89:50070</value>
+2：<name>dfs.secondary.http.address</name>
+   <value>192.168.71.213:50070</value>
+
+修改mapred-site.xml文件
+   <name>mapred.job.tracker</name>
+   <value>192.168.71.89:9001</value>
