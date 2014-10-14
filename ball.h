@@ -19,7 +19,6 @@ private:
 	int my ;
 	struct Bound *bound ;
 public :
-	//we add different comments
 	void init(int x, int y ,int mx , int my , struct Bound *bound) ;
 	bool move(int x1 , int x2) ;
 	bool isOut(int x1 , int x2) ;
